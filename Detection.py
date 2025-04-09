@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import sys
 
-def imshow(title, img, scale=0.2):
+def imshow(title, img, scale = 0.2):
     if img is None:
         sys.exit("Could not read the image.")
     new_size = (int(img.shape[1] * scale), int(img.shape[0] * scale))
@@ -12,10 +12,10 @@ def imshow(title, img, scale=0.2):
     cv2.destroyAllWindows()
 
 
-lower_red1 = np.array([15-15, 50, 20])
-upper_red1 = np.array([15, 255, 255])
+lower_red1 = np.array([15-15, 109, 70])
+upper_red1 = np.array([8, 255, 255])
 
-lower_red2 = np.array([180-15, 50, 20])
+lower_red2 = np.array([180-8, 110, 70])
 upper_red2 = np.array([180, 255, 255])
 
 def centroid(mask, img):
@@ -24,11 +24,15 @@ def centroid(mask, img):
     #thresh = cv2.threshold(img_gray, 20,255 , cv2.THRESH_BINARY)[1]
     M = cv2.moments(mask)
     print(M)
-    cX = int(M["m10"] / M["m00"])
-    cY = int(M["m01"] / M["m00"])
-    cv2.circle(img, (cX, cY), 400, (255, 0, 0), -1)
-    cv2.putText(img, "Centroid", (cX, cY), cv2.FONT_HERSHEY_SIMPLEX, 2.5, (0,0,0), 9)
-    imshow("Centroid Detected", img)
+    try:
+        cX = int(M["m10"] / M["m00"])
+        cY = int(M["m01"] / M["m00"])
+        cv2.circle(img, (cX, cY), 400, (255, 0, 0), -1)
+        cv2.putText(img, "Centroid", (cX, cY), cv2.FONT_HERSHEY_SIMPLEX, 2.5, (0,0,0), 9)
+    except:
+        pass
+    return img
+    #imshow("Centroid Detected", img)
 
 def detect_red_ball(img):
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -39,6 +43,8 @@ def detect_red_ball(img):
     #imshow("Masks combined", mask)
 
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return img, mask
     largest_contour = max(contours, key=cv2.contourArea)
     print(largest_contour)
 
