@@ -11,7 +11,6 @@ def imshow(title, img, scale = 0.2):
     cv2.waitKey(0)  # wait forever
     cv2.destroyAllWindows()
 
-
 lower_red1 = np.array([15-15, 109, 70])
 upper_red1 = np.array([8, 255, 255])
 
